@@ -8,6 +8,7 @@ Welcome to the extended documentation for `x-thread-to-pdf`.
 - [Usage reference](USAGE.md)
 - [Architecture](ARCHITECTURE.md)
 - [Troubleshooting](TROUBLESHOOTING.md)
+- [Bibliography](BIBLIOGRAPHY.md)
 - [GitHub Actions CI template](ci/github-actions-ci.yml)
 
 ## Project assets
@@ -16,4 +17,5 @@ Welcome to the extended documentation for `x-thread-to-pdf`.
 - [Application icon](assets/app-icon.svg)
 - [CLI visual](assets/hero.svg)
 - [Output visual](assets/example-output.svg)
+- [PDF preview image](assets/example-vixhal-preview.png)
 - [Sample PDFs](examples/)

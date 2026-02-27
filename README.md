@@ -31,8 +31,9 @@ It preserves:
 
 ## Table of contents
 
-- [Quick start](#quick-start)
-- [Usage examples](#usage-examples)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Bibliography](#bibliography)
 - [Sample PDFs](#sample-pdfs)
 - [How it works](#how-it-works)
 - [Documentation](#documentation)
@@ -40,44 +41,57 @@ It preserves:
 - [Security and privacy](#security-and-privacy)
 - [License](#license)
 
-## Quick start
+## Installation
 
-### 1. Clone
+### 1. Clone the repository
 
 ```bash
-git clone <YOUR-REPO-URL>
+git clone https://github.com/cabraham2/articleX.git
 cd articleX
 ```
 
-### 2. Run with auto-bootstrap
+### 2. Recommended: auto-bootstrap mode
 
-The `./start.sh` script initializes dependencies if needed and launches conversion:
+`./start.sh` installs what is missing (`npm` deps + Playwright Chromium) and runs conversion.
 
 ```bash
 ./start.sh "https://x.com/TheVixhal/status/2026002315371745671"
 ```
 
-Default output:
+Generated file (default):
 
 ```bash
 ./output/x-2026002315371745671.pdf
 ```
 
-## Usage examples
+### 3. Manual installation (optional)
 
-### Example A: default output name
+```bash
+npm install
+npx playwright install chromium
+```
+
+Then run:
+
+```bash
+node ./src/x-thread-to-pdf.mjs "https://x.com/TheVixhal/status/2026002315371745671"
+```
+
+## Usage
+
+### Single URL
 
 ```bash
 ./start.sh "https://x.com/TheVixhal/status/2026002315371745671"
 ```
 
-### Example B: multiple URLs in one run
+### Multiple URLs in one command
 
 ```bash
 ./start.sh "https://x.com/TheVixhal/status/2026002315371745671" "https://x.com/wickedguro/status/2025967492359913862"
 ```
 
-### Example C: input file (.txt)
+### Input file (`.txt`)
 
 `links.txt` can contain URLs separated by spaces, commas, or new lines.
 
@@ -85,23 +99,39 @@ Default output:
 ./start.sh ./links.txt
 ```
 
-### Example D: custom output file (single URL)
+### Custom output directory
+
+```bash
+./start.sh ./links.txt --out-dir "./output/my-batch"
+```
+
+### Custom output file (single URL only)
 
 ```bash
 ./start.sh "https://x.com/wickedguro/status/2025967492359913862" --output "./output/wickedguro.pdf"
 ```
 
-### Example E: run CLI directly
+### Interactive mode
 
 ```bash
-npm install
-npx playwright install chromium
-node ./src/x-thread-to-pdf.mjs "https://x.com/TheVixhal/status/2026002315371745671" --out-dir ./output
+./start.sh
 ```
 
-### Example F: interactive mode
+If no argument is provided, the script prompts you for one or more URLs (or a `.txt` path).
 
-If you run `./start.sh` without arguments, the script prompts you for one or more URLs (or a `.txt` path).
+## Bibliography
+
+Reference examples used in this repository:
+
+- Source post: https://x.com/TheVixhal/status/2026002315371745671
+- Exported PDF: [`docs/examples/example-vixhal.pdf`](docs/examples/example-vixhal.pdf)
+- Source post: https://x.com/wickedguro/status/2025967492359913862
+- Exported PDF: [`docs/examples/example-wickedguro.pdf`](docs/examples/example-wickedguro.pdf)
+- Extended references: [`docs/BIBLIOGRAPHY.md`](docs/BIBLIOGRAPHY.md)
+
+Preview image from a generated PDF:
+
+![Example PDF preview](docs/assets/example-vixhal-preview.png)
 
 ## Sample PDFs
 
