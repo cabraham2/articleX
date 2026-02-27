@@ -1,0 +1,16 @@
+{
+  "name": "x-thread-to-pdf",
+  "version": "1.0.0",
+  "description": "CLI tool that converts a public X post/thread/article URL to a PDF",
+  "type": "module",
+  "bin": {
+    "x-thread-to-pdf": "./src/x-thread-to-pdf.mjs"
+  },
+  "scripts": {
+    "start": "node ./src/x-thread-to-pdf.mjs",
+    "check": "node --check ./src/x-thread-to-pdf.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.54.2"
+  }
+}

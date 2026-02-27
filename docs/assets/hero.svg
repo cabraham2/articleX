@@ -1,0 +1,51 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020617"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="terminal" x1="70" y1="120" x2="760" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827"/>
+      <stop offset="1" stop-color="#1F2937"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="780" y1="70" x2="1220" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#E2E8F0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="170" cy="126" r="82" fill="#1D4ED8" fill-opacity="0.22"/>
+  <circle cx="1186" cy="572" r="132" fill="#0891B2" fill-opacity="0.2"/>
+
+  <rect x="58" y="92" width="740" height="538" rx="24" fill="url(#terminal)" stroke="#334155" stroke-width="2"/>
+  <rect x="58" y="92" width="740" height="42" rx="24" fill="#0B1220"/>
+  <circle cx="86" cy="113" r="7" fill="#EF4444"/>
+  <circle cx="108" cy="113" r="7" fill="#F59E0B"/>
+  <circle cx="130" cy="113" r="7" fill="#22C55E"/>
+
+  <text x="82" y="183" fill="#93C5FD" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="25">$ ./start "https://x.com/.../status/2026002315371745671"</text>
+  <text x="82" y="233" fill="#E5E7EB" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="24">-&gt; Recuperation du post 2026002315371745671</text>
+  <text x="82" y="281" fill="#E5E7EB" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="24">-&gt; Generation du PDF</text>
+  <text x="82" y="328" fill="#86EFAC" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="24">OK: PDF cree: ./x-2026002315371745671.pdf</text>
+
+  <rect x="82" y="372" width="666" height="218" rx="16" fill="#0B1220" stroke="#1F2937"/>
+  <text x="108" y="420" fill="#CBD5E1" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="22">Preserves:</text>
+  <text x="108" y="458" fill="#E5E7EB" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="20">- Title, metadata, source URL</text>
+  <text x="108" y="490" fill="#E5E7EB" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="20">- Article structure and inline media</text>
+  <text x="108" y="522" fill="#E5E7EB" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="20">- Lists and code blocks</text>
+  <text x="108" y="554" fill="#E5E7EB" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="20">- Print-friendly layout</text>
+
+  <rect x="820" y="70" width="400" height="578" rx="28" fill="url(#paper)" stroke="#CBD5E1" stroke-width="2"/>
+  <rect x="858" y="122" width="324" height="34" rx="10" fill="#DCEAFE"/>
+  <rect x="858" y="176" width="286" height="12" rx="6" fill="#94A3B8"/>
+  <rect x="858" y="199" width="240" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="858" y="234" width="324" height="172" rx="16" fill="#BFDBFE"/>
+  <rect x="858" y="428" width="324" height="12" rx="6" fill="#94A3B8"/>
+  <rect x="858" y="451" width="300" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="858" y="474" width="324" height="12" rx="6" fill="#CBD5E1"/>
+  <rect x="858" y="512" width="324" height="96" rx="16" fill="#F1F5F9" stroke="#CBD5E1"/>
+
+  <text x="66" y="58" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700">CLI Demo</text>
+  <text x="820" y="58" fill="#E2E8F0" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700">PDF Output</text>
+</svg>

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT_DIR"
+export PLAYWRIGHT_BROWSERS_PATH="$ROOT_DIR/.playwright-browsers"
+
+print_usage() {
+  echo "Usage: ./start <x_url> [output.pdf]"
+  echo "Exemple: ./start \"https://x.com/TheVixhal/status/2026002315371745671\""
+}
+
+if [[ $# -eq 0 ]]; then
+  print_usage
+  exit 1
+fi
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  print_usage
+  exit 0
+fi
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "Erreur: Node.js est requis."
+  exit 1
+fi
+
+if ! command -v npm >/dev/null 2>&1; then
+  echo "Erreur: npm est requis."
+  exit 1
+fi
+
+if [[ ! -f package.json ]]; then
+  echo "Erreur: package.json introuvable dans $ROOT_DIR"
+  exit 1
+fi
+
+if [[ ! -d node_modules || ! -d node_modules/playwright ]]; then
+  echo "-> Installation des dependances npm"
+  npm install
+fi
+
+if ! node --input-type=module -e "import { chromium } from 'playwright'; import { existsSync } from 'node:fs'; process.exit(existsSync(chromium.executablePath()) ? 0 : 1);" >/dev/null 2>&1; then
+  echo "-> Installation de Chromium (Playwright)"
+  npx playwright install chromium
+fi
+
+echo "-> Lancement de la conversion"
+node ./src/x-thread-to-pdf.mjs "$@"

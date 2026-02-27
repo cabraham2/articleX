@@ -1,0 +1,42 @@
+<svg width="1200" height="320" viewBox="0 0 1200 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="320" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1220"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="80" y1="56" x2="420" y2="264" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="294" y1="60" x2="454" y2="252" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="1200" height="320" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <rect x="20" y="20" width="1160" height="280" rx="28" fill="url(#bg)" filter="url(#shadow)"/>
+
+  <g transform="translate(70,58)">
+    <rect x="0" y="0" width="360" height="204" rx="24" fill="#0F172A" stroke="#334155" stroke-width="2"/>
+    <path d="M64 42H132L180 104L238 42H304L212 126L308 162H238L178 118L132 162H64L146 102L64 42Z" fill="url(#accent)"/>
+    <path d="M256 34L386 78L256 122L242 98L330 78L242 58L256 34Z" fill="#38BDF8"/>
+    <rect x="224" y="38" width="160" height="160" rx="20" fill="url(#paper)" stroke="#CBD5E1" stroke-width="2"/>
+    <path d="M254 78H354" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
+    <path d="M254 108H336" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
+    <path d="M254 138H350" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
+    <path d="M254 168H310" stroke="#94A3B8" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="194" cy="105" r="10" fill="#2563EB"/>
+  </g>
+
+  <g transform="translate(490,92)" fill="#E2E8F0">
+    <text x="0" y="48" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="700" letter-spacing="0.5">
+      X Thread to PDF
+    </text>
+    <text x="2" y="96" font-family="Segoe UI, Arial, sans-serif" font-size="24" fill="#93C5FD">
+      Clean PDF exports of public X content from your terminal
+    </text>
+  </g>
+</svg>
