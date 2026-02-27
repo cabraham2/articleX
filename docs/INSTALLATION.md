@@ -8,10 +8,10 @@
 
 ## Option A: auto-bootstrap (recommended)
 
-`./start` checks dependencies, installs missing packages, installs Playwright Chromium if needed, and runs conversion.
+`./start.sh` checks dependencies, installs missing packages, installs Playwright Chromium if needed, and runs conversion.
 
 ```bash
-./start "https://x.com/TheVixhal/status/2026002315371745671"
+./start.sh "https://x.com/TheVixhal/status/2026002315371745671"
 ```
 
 ## Option B: manual setup
@@ -29,5 +29,5 @@ node ./src/x-thread-to-pdf.mjs "https://x.com/TheVixhal/status/20260023153717456
 
 ## Notes
 
-- Browser binaries are stored in `.playwright-browsers/` by `./start`.
+- Browser binaries are stored in `.playwright-browsers/` by `./start.sh`.
 - This folder is ignored by git and should not be committed.

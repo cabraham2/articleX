@@ -1,21 +1,70 @@
 #!/usr/bin/env node
 
 import path from "node:path";
-import { mkdir } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { mkdir, readFile, stat } from "node:fs/promises";
 import { chromium } from "playwright";
 
 const API_TIMEOUT_MS = 20000;
 const API_RETRIES = 3;
+const DEFAULT_OUTPUT_DIR = "output";
+
+const USE_COLOR = process.stdout.isTTY && process.env.NO_COLOR !== "1";
+const ANSI = {
+  reset: "\x1b[0m",
+  bold: "\x1b[1m",
+  cyan: "\x1b[36m",
+  blue: "\x1b[34m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  red: "\x1b[31m",
+  gray: "\x1b[90m"
+};
+
+function paint(color, text) {
+  if (!USE_COLOR) {
+    return text;
+  }
+  return `${ANSI[color] ?? ""}${text}${ANSI.reset}`;
+}
+
+function uiStep(message) {
+  console.log(`${paint("cyan", "->")} ${message}`);
+}
+
+function uiOk(message) {
+  console.log(`${paint("green", "OK")} ${message}`);
+}
+
+function uiWarn(message) {
+  console.warn(`${paint("yellow", "WARN")} ${message}`);
+}
+
+function uiError(message) {
+  console.error(`${paint("red", "ERREUR")} ${message}`);
+}
+
+function printBanner() {
+  console.log("");
+  console.log(paint("blue", "╔══════════════════════════════════════════════════════════════╗"));
+  console.log(
+    `${paint("blue", "║")} ${paint("bold", "X Thread to PDF")} ${paint("gray", "• export propre depuis le terminal")} ${paint("blue", "║")}`
+  );
+  console.log(paint("blue", "╚══════════════════════════════════════════════════════════════╝"));
+}
 
 function usage() {
   console.log(
     [
       "Usage:",
-      "  x-thread-to-pdf <x_url> [output.pdf]",
+      "  x-thread-to-pdf <x_url|input.txt|liste> [autres_urls_ou_fichiers...] [--out-dir <dir>] [--output <pdf>]",
       "",
       "Examples:",
       "  x-thread-to-pdf https://x.com/TheVixhal/status/2026002315371745671",
-      "  x-thread-to-pdf https://x.com/wickedguro/status/2025967492359913862 out/article.pdf"
+      "  x-thread-to-pdf https://x.com/a/status/1 https://x.com/b/status/2",
+      "  x-thread-to-pdf ./links.txt",
+      "  x-thread-to-pdf \"https://x.com/a/status/1, https://x.com/b/status/2\"",
+      "  x-thread-to-pdf https://x.com/a/status/1 --output ./output/custom.pdf"
     ].join("\n")
   );
 }
@@ -62,11 +111,164 @@ function parseStatusId(input) {
   return statusMatch[1];
 }
 
-function outputPathFromStatusId(statusId, outputArg) {
-  if (outputArg) {
-    return outputArg;
+function outputPathFromStatusId(statusId, outputArg, outDir = DEFAULT_OUTPUT_DIR) {
+  if (outputArg && outputArg.length > 0) {
+    return path.resolve(process.cwd(), outputArg);
   }
-  return path.resolve(process.cwd(), `x-${statusId}.pdf`);
+  return path.resolve(process.cwd(), outDir, `x-${statusId}.pdf`);
+}
+
+function stripWrappingQuotes(value) {
+  let text = String(value ?? "").trim();
+  if (!text) {
+    return "";
+  }
+  const pairs = [
+    ['"', '"'],
+    ["'", "'"]
+  ];
+  for (const [left, right] of pairs) {
+    if (text.startsWith(left) && text.endsWith(right) && text.length >= 2) {
+      text = text.slice(1, -1).trim();
+    }
+  }
+  return text;
+}
+
+function cleanToken(token) {
+  let value = stripWrappingQuotes(token);
+  value = value.replace(/^[,;]+/, "").replace(/[,;]+$/, "");
+  return value.trim();
+}
+
+function extractRawTokens(text) {
+  const tokens = String(text ?? "")
+    .split(/[\s,\n\r\t]+/g)
+    .map(cleanToken)
+    .filter(Boolean);
+  return tokens;
+}
+
+async function readUrlsFromFile(filePath) {
+  const data = await readFile(filePath, "utf8");
+  const raw = extractRawTokens(data);
+  return raw;
+}
+
+async function expandInputItems(items) {
+  const expanded = [];
+  for (const item of items) {
+    const value = cleanToken(item);
+    if (!value) {
+      continue;
+    }
+    if (existsSync(value)) {
+      try {
+        const fileStat = await stat(value);
+        if (fileStat.isFile()) {
+          const fromFile = await readUrlsFromFile(value);
+          expanded.push(...fromFile);
+          continue;
+        }
+      } catch {
+        // Fallback to parsing as plain text below.
+      }
+    }
+    expanded.push(...extractRawTokens(value));
+  }
+  return expanded;
+}
+
+function looksLikeUrl(value) {
+  return /^https?:\/\//i.test(value);
+}
+
+function parseCliOptions(argv) {
+  const options = {
+    showHelp: false,
+    outDir: DEFAULT_OUTPUT_DIR,
+    outputFile: null,
+    inputs: []
+  };
+
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === "-h" || arg === "--help") {
+      options.showHelp = true;
+      continue;
+    }
+    if (arg === "-d" || arg === "--out-dir") {
+      if (i + 1 >= argv.length) {
+        throw new Error("Option --out-dir sans valeur.");
+      }
+      options.outDir = argv[i + 1];
+      i += 1;
+      continue;
+    }
+    if (arg === "-o" || arg === "--output") {
+      if (i + 1 >= argv.length) {
+        throw new Error("Option --output sans valeur.");
+      }
+      options.outputFile = argv[i + 1];
+      i += 1;
+      continue;
+    }
+    options.inputs.push(arg);
+  }
+
+  return options;
+}
+
+async function buildJobs(options) {
+  const rawItems = await expandInputItems(options.inputs);
+  if (rawItems.length === 0) {
+    throw new Error("Aucune URL/fichier exploitable detecte.");
+  }
+
+  const jobs = [];
+  const seenStatus = new Set();
+  const invalidEntries = [];
+
+  for (const item of rawItems) {
+    const token = cleanToken(item);
+    if (!token) {
+      continue;
+    }
+    if (!looksLikeUrl(token)) {
+      invalidEntries.push(token);
+      continue;
+    }
+    try {
+      const statusId = parseStatusId(token);
+      if (seenStatus.has(statusId)) {
+        continue;
+      }
+      seenStatus.add(statusId);
+      jobs.push({
+        inputUrl: token,
+        statusId
+      });
+    } catch {
+      invalidEntries.push(token);
+    }
+  }
+
+  if (invalidEntries.length > 0) {
+    uiWarn(`Entrees ignorees (non valides): ${invalidEntries.slice(0, 5).join(", ")}${invalidEntries.length > 5 ? "..." : ""}`);
+  }
+
+  if (jobs.length === 0) {
+    throw new Error("Aucune URL X valide trouvee.");
+  }
+
+  if (options.outputFile && jobs.length > 1) {
+    throw new Error("L'option --output est reservee a une seule URL. Utilise --out-dir pour les traitements multiples.");
+  }
+
+  return jobs.map((job) => ({
+    ...job,
+    outputPath: outputPathFromStatusId(job.statusId, options.outputFile, options.outDir)
+  }));
 }
 
 async function fetchJson(url, timeoutMs) {
@@ -695,28 +897,40 @@ async function htmlToPdf(html, outputPath) {
 }
 
 async function main() {
-  const args = process.argv.slice(2);
-  if (args.length === 0 || args.includes("-h") || args.includes("--help")) {
+  const options = parseCliOptions(process.argv.slice(2));
+  if (options.showHelp || options.inputs.length === 0) {
     usage();
-    process.exit(args.length === 0 ? 1 : 0);
+    process.exit(options.showHelp ? 0 : 1);
   }
 
-  const inputUrl = args[0];
-  const outputArg = args[1];
-  const statusId = parseStatusId(inputUrl);
-  const outputPath = outputPathFromStatusId(statusId, outputArg);
+  printBanner();
+  const jobs = await buildJobs(options);
+  uiStep(`${jobs.length} publication(s) a convertir`);
 
-  console.log(`-> Recuperation du post ${statusId}`);
-  const model = await resolveTweetData(statusId, inputUrl);
-  const html = buildHtmlDocument(model, inputUrl);
+  const failures = [];
+  for (const [index, job] of jobs.entries()) {
+    const marker = paint("bold", `[${index + 1}/${jobs.length}]`);
+    uiStep(`${marker} Recuperation du post ${job.statusId}`);
+    try {
+      const model = await resolveTweetData(job.statusId, job.inputUrl);
+      const html = buildHtmlDocument(model, job.inputUrl);
+      uiStep(`${marker} Generation PDF -> ${job.outputPath}`);
+      await htmlToPdf(html, job.outputPath);
+      uiOk(` ${job.outputPath}`);
+    } catch (error) {
+      failures.push({ job, error });
+      uiError(`[${index + 1}/${jobs.length}] ${job.inputUrl} -> ${error.message}`);
+    }
+  }
 
-  console.log("-> Generation du PDF");
-  await htmlToPdf(html, outputPath);
+  if (failures.length > 0) {
+    throw new Error(`${failures.length}/${jobs.length} conversion(s) en echec.`);
+  }
 
-  console.log(`OK: PDF cree: ${outputPath}`);
+  uiOk(` ${jobs.length} PDF genere(s) avec succes.`);
 }
 
 main().catch((error) => {
-  console.error(`Erreur: ${error.message}`);
+  uiError(error.message);
   process.exit(1);
 });

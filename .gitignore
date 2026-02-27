@@ -1,5 +1,6 @@
 node_modules/
 *.pdf
+!docs/examples/*.pdf
 out/
 .playwright-browsers/
 .DS_Store

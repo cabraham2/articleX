@@ -33,6 +33,7 @@ It preserves:
 
 - [Quick start](#quick-start)
 - [Usage examples](#usage-examples)
+- [Sample PDFs](#sample-pdfs)
 - [How it works](#how-it-works)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
@@ -50,16 +51,16 @@ cd articleX
 
 ### 2. Run with auto-bootstrap
 
-The `./start` script initializes dependencies if needed and launches conversion:
+The `./start.sh` script initializes dependencies if needed and launches conversion:
 
 ```bash
-./start "https://x.com/TheVixhal/status/2026002315371745671"
+./start.sh "https://x.com/TheVixhal/status/2026002315371745671"
 ```
 
 Default output:
 
 ```bash
-./x-2026002315371745671.pdf
+./output/x-2026002315371745671.pdf
 ```
 
 ## Usage examples
@@ -67,22 +68,47 @@ Default output:
 ### Example A: default output name
 
 ```bash
-./start "https://x.com/TheVixhal/status/2026002315371745671"
+./start.sh "https://x.com/TheVixhal/status/2026002315371745671"
 ```
 
-### Example B: custom output path
+### Example B: multiple URLs in one run
 
 ```bash
-./start "https://x.com/wickedguro/status/2025967492359913862" "./out/wickedguro.pdf"
+./start.sh "https://x.com/TheVixhal/status/2026002315371745671" "https://x.com/wickedguro/status/2025967492359913862"
 ```
 
-### Example C: run CLI directly
+### Example C: input file (.txt)
+
+`links.txt` can contain URLs separated by spaces, commas, or new lines.
+
+```bash
+./start.sh ./links.txt
+```
+
+### Example D: custom output file (single URL)
+
+```bash
+./start.sh "https://x.com/wickedguro/status/2025967492359913862" --output "./output/wickedguro.pdf"
+```
+
+### Example E: run CLI directly
 
 ```bash
 npm install
 npx playwright install chromium
-node ./src/x-thread-to-pdf.mjs "https://x.com/TheVixhal/status/2026002315371745671" "./out/result.pdf"
+node ./src/x-thread-to-pdf.mjs "https://x.com/TheVixhal/status/2026002315371745671" --out-dir ./output
 ```
+
+### Example F: interactive mode
+
+If you run `./start.sh` without arguments, the script prompts you for one or more URLs (or a `.txt` path).
+
+## Sample PDFs
+
+Committed example outputs:
+
+- [`docs/examples/example-vixhal.pdf`](docs/examples/example-vixhal.pdf)
+- [`docs/examples/example-wickedguro.pdf`](docs/examples/example-wickedguro.pdf)
 
 ## How it works
 

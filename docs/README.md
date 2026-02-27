@@ -16,3 +16,4 @@ Welcome to the extended documentation for `x-thread-to-pdf`.
 - [Application icon](assets/app-icon.svg)
 - [CLI visual](assets/hero.svg)
 - [Output visual](assets/example-output.svg)
+- [Sample PDFs](examples/)

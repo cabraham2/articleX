@@ -3,46 +3,68 @@
 ## CLI syntax
 
 ```bash
-./start <x_url> [output.pdf]
+./start.sh <x_url|input.txt|liste> [autres_urls_ou_fichiers...] [--out-dir output] [--output fichier.pdf]
 ```
 
 Equivalent direct command:
 
 ```bash
-node ./src/x-thread-to-pdf.mjs <x_url> [output.pdf]
+node ./src/x-thread-to-pdf.mjs <x_url|input.txt|liste> [autres_urls_ou_fichiers...] [--out-dir output] [--output fichier.pdf]
 ```
 
 ## Arguments
 
 - `<x_url>`: a public X URL containing `/status/<id>`
-- `[output.pdf]`: optional custom output path
+- `input.txt`: file containing URLs (spaces, commas, new lines accepted)
+- `--out-dir`: output directory for generated PDFs (default: `output`)
+- `--output`: custom output PDF path (single URL only)
 
 ## Examples
 
 ### Export with default filename
 
 ```bash
-./start "https://x.com/TheVixhal/status/2026002315371745671"
+./start.sh "https://x.com/TheVixhal/status/2026002315371745671"
 ```
 
 Expected output:
 
 ```bash
-./x-2026002315371745671.pdf
+./output/x-2026002315371745671.pdf
 ```
 
-### Export to custom path
+### Export multiple URLs in one command
 
 ```bash
-./start "https://x.com/wickedguro/status/2025967492359913862" "./out/wickedguro.pdf"
+./start.sh "https://x.com/TheVixhal/status/2026002315371745671" "https://x.com/wickedguro/status/2025967492359913862"
+```
+
+### Export from input file
+
+```bash
+./start.sh ./links.txt
+```
+
+### Export with custom output file (single URL)
+
+```bash
+./start.sh "https://x.com/wickedguro/status/2025967492359913862" --output "./output/wickedguro.pdf"
 ```
 
 ### Help
 
 ```bash
-./start --help
+./start.sh --help
 node ./src/x-thread-to-pdf.mjs --help
 ```
+
+### Interactive prompt
+
+```bash
+./start.sh
+```
+
+If no argument is provided, the script asks for one or more URLs (or a `.txt` file path).
 
 ## Conversion behavior
 
