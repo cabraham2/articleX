@@ -11,6 +11,7 @@
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-0f172a?style=flat-square" alt="Platform" />
   <img src="https://img.shields.io/badge/status-active-15803d?style=flat-square" alt="Project status" />
   <img src="https://img.shields.io/badge/license-MIT-2563eb?style=flat-square" alt="License" />
+  <img src="https://komarev.com/ghpvc/?username=cabraham2&repo=articleX&label=README+views&color=0f766e&style=flat-square" alt="README views" />
 </p>
 
 ![CLI preview](docs/assets/hero.svg)
